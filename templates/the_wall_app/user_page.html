@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body style="padding: 10px;">
+    <div>
+        <div style="display: flex; justify-content: space-between;">
+            <h1>CodingDojo Wall</h1>
+            <ul style="display: flex; justify-content: space-between; list-style: none;">
+                <li style="margin:5px;">Welcome {{user.first_name}}</li>
+                <li style="margin:5px;"> <a href="/logout">log off</a></li>
+            </ul>
+        </div>
+        <form action="the_wall_app/post_message" method="post">
+            {% csrf_token %}
+            <p>Post a message</p>
+            <input type="hidden" name="user" value="{{user.id}}">
+            <input type="text" name="message" style="width: 100%;">
+            <div style="display: flex; justify-content: right;">
+                <input type="submit" value="Post a message" style="background-color: blue; color: white; border: solid black 1pt; box-shadow: 1pt 1pt black; display: block; margin-top: 10px;">
+            </div>
+        </form>
+        <div>
+            {% for message in messages%}
+                <p style="display: block;"><strong>{{message.user.first_name}} {{message.user.last_name}}-{{message.created_at}}</strong></p>
+                <p style="display: block;">{{message.message}}</p>
+                <form action="the_wall_app/delete_message" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="user" value="{{user.id}}">
+                    <input type="hidden" name="message" value="{{message.id}}">
+                    <div style="display: flex; justify-content: right;">
+                        <input type="submit" value="Delete the message" style="background-color: red; color: white; border: solid black 1pt; box-shadow: 1pt 1pt black; display: block; margin-top: 10px;">
+                    </div>
+                </form>
+                <div style="padding-left: 20px ;">
+
+                    {% for comment in message.comments.all %}
+                    <p style="display: block;"> <strong>{{comment.user.first_name}} {{comment.user.last_name}}-{{comment.created_at}}</strong></p>
+                    <p style="display: block;">{{comment.comment}}</p>
+                    {% endfor %}
+                    <form action="the_wall_app/post_comment" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="user" value="{{user.id}}" >
+                        <input type="hidden" name="message" value="{{message.id}}">
+                        <input type="text" name="comment" style="width: 100%;" style="display: block;">
+                        <div style="display: flex; justify-content: right;">
+                            <input type="submit" value="Post a comment" style="background-color: green; color: white; border: solid black 1pt; box-shadow: 1pt 1pt black; display: block; margin-top: 10px;">
+                        </div>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
